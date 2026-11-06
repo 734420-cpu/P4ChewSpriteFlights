@@ -30,6 +30,15 @@ public class PlayerController : MonoBehaviour
             transform.up = direction;
             rb.AddForce(direction * thrustForce);
         }
+
+        if(Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            boosterFlame.SetActive(true);
+        }
+        else if (Mouse.current.leftButton.wasReleasedThisFrame)
+        {
+            boosterFlame.SetActive(false);
+        }
     }
 
     void OnCollisionEnter2D(Collision2D collision)
