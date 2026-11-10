@@ -1,5 +1,7 @@
+
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -7,13 +9,37 @@ public class PlayerController : MonoBehaviour
     public GameObject boosterFlame;
     public float thrustForce = 1f;
     Rigidbody2D rb;
+    private float elapsedTime = 0f;
+    private float score = 0f;
+    private float scoreMultiplier = 10f;
+    public UIDocument uiDocument;
+    private Label scoreText;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        scoreText = uiDocument.rootVisualElement.Q<Label>("ScoreLabel");
     }
 
     void Update()
+    {
+        UpdateScore();
+        MovePlayer();
+    }
+
+
+    void UpdateScore()
+    {
+        elapsedTime += Time.deltaTime;
+        score = Mathf.FloorToInt(elapsedTime * scoreMultiplier);
+
+        scoreText.text = "Score: " + score;
+
+        Debug.Log("Score: " + score);
+    }
+
+    void MovePlayer()
     {
         if (rb.linearVelocity.magnitude > maxSpeed)
         {
@@ -31,7 +57,7 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(direction * thrustForce);
         }
 
-        if(Mouse.current.leftButton.wasPressedThisFrame)
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             boosterFlame.SetActive(true);
         }
@@ -40,6 +66,7 @@ public class PlayerController : MonoBehaviour
             boosterFlame.SetActive(false);
         }
     }
+
 
     void OnCollisionEnter2D(Collision2D collision)
     {
