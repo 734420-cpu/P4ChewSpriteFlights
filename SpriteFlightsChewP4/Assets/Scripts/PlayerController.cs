@@ -1,12 +1,15 @@
 
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
     public float maxSpeed = 5f;
     public GameObject boosterFlame;
+    public GameObject explosionEffect;
     public float thrustForce = 1f;
     Rigidbody2D rb;
     private float elapsedTime = 0f;
@@ -14,12 +17,17 @@ public class PlayerController : MonoBehaviour
     private float scoreMultiplier = 10f;
     public UIDocument uiDocument;
     private Label scoreText;
+    private Button restartButton;
+
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
         scoreText = uiDocument.rootVisualElement.Q<Label>("ScoreLabel");
+        restartButton = uiDocument.rootVisualElement.Q<Button>("RestartButton");
+        restartButton.style.display = DisplayStyle.None;
+        restartButton.clicked += ReloadScene;
     }
 
     void Update()
@@ -67,9 +75,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
     void OnCollisionEnter2D(Collision2D collision)
     {
         Destroy(gameObject);
+        Instantiate(explosionEffect, transform.position, transform.rotation);
+        restartButton.style.display = DisplayStyle.Flex;
     }
+
+
 }
